@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>心理测评 · 教师端汇总报告</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --card: #ffffff;
+      --primary: #4a6fa5;
+      --secondary: #7aa6c2;
+      --text-main: #1f2d3d;
+      --text-sub: #6b7280;
+      --border: #e5e7eb;
+      --green: #5fb3a2;
+      --yellow: #f2c94c;
+      --orange: #f2994a;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    p {
+      margin: 0;
+      line-height: 1.6;
+      color: var(--text-sub);
+      font-size: 14px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+
+    /* Header */
+    .header-meta {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    /* Distribution bar */
+    .distribution {
+      margin-top: 16px;
+    }
+
+    .bar {
+      display: flex;
+      height: 14px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #e5e7eb;
+    }
+
+    .bar div {
+      height: 100%;
+    }
+
+    .low { background: var(--orange); width: 15%; }
+    .mid { background: var(--yellow); width: 45%; }
+    .high { background: var(--green); width: 40%; }
+
+    .legend {
+      display: flex;
+      gap: 16px;
+      margin-top: 10px;
+      font-size: 13px;
+    }
+
+    .legend span::before {
+      content: "";
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    .legend .low::before { background: var(--orange); }
+    .legend .mid::before { background: var(--yellow); }
+    .legend .high::before { background: var(--green); }
+
+    /* Dimension bars */
+    .dimension {
+      margin-bottom: 14px;
+    }
+
+    .dimension-label {
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .dimension-bar {
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .dimension-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 60%;
+    }
+
+    /* Attention groups */
+    .groups {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .group-card {
+      border-radius: 10px;
+      padding: 16px;
+      font-size: 14px;
+    }
+
+    .stable { background: rgba(95,179,162,0.15); }
+    .mild { background: rgba(242,201,76,0.18); }
+    .focus { background: rgba(242,153,74,0.18); }
+
+    /* Collapsible */
+    details summary {
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    ul {
+      padding-left: 18px;
+      font-size: 14px;
+      color: var(--text-sub);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <div class="card">
+      <h1>情绪理解与社交能力 · 班级汇总报告</h1>
+      <div class="header-meta">
+        班级：高二（3）班 ｜ 测评人数：20 人 ｜ 量表：MWI Adult CN V0
+      </div>
+    </div>
+
+    <!-- Overview -->
+    <div class="card">
+      <h2>班级整体概览</h2>
+      <div class="distribution">
+        <div class="bar">
+          <div class="low"></div>
+          <div class="mid"></div>
+          <div class="high"></div>
+        </div>
+        <div class="legend">
+          <span class="low">低于常模 15%</span>
+          <span class="mid">接近常模 45%</span>
+          <span class="high">高于常模 40%</span>
+        </div>
+      </div>
+      <p style="margin-top:14px;">
+        班级整体在情绪理解与社交能力上表现较为稳定，多数学生具备基本的情绪觉察与互动能力，
+        少部分学生在情绪调节或社交情境中可能感到压力。
+      </p>
+    </div>
+
+    <!-- Dimensions -->
+    <div class="card">
+      <h2>能力维度分布</h2>
+
+      <div class="dimension">
+        <div class="dimension-label">情绪觉察</div>
+        <div class="dimension-bar">
+          <div class="dimension-fill" style="width:70%;"></div>
+        </div>
+      </div>
+
+      <div class="dimension">
+        <div class="dimension-label">情绪调节</div>
+        <div class="dimension-bar">
+          <div class="dimension-fill" style="width:55%;"></div>
+        </div>
+      </div>
+
+      <div class="dimension">
+        <div class="dimension-label">社交应对</div>
+        <div class="dimension-bar">
+          <div class="dimension-fill" style="width:60%;"></div>
+        </div>
+      </div>
+
+      <div class="dimension">
+        <div class="dimension-label">合作与冲突处理</div>
+        <div class="dimension-bar">
+          <div class="dimension-fill" style="width:75%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attention Groups -->
+    <div class="card">
+      <h2>学生状态分布</h2>
+      <div class="groups">
+        <div class="group-card stable">
+          <strong>状态稳定</strong><br/>
+          12 人<br/>
+          情绪与社交能力整体良好
+        </div>
+        <div class="group-card mild">
+          <strong>轻度关注</strong><br/>
+          5 人<br/>
+          个别维度存在波动
+        </div>
+        <div class="group-card focus">
+          <strong>重点关注</strong><br/>
+          3 人<br/>
+          多项维度偏低
+        </div>
+      </div>
+    </div>
+
+    <!-- Insights -->
+    <div class="card">
+      <details>
+        <summary>查看班级中分歧较大的陈述</summary>
+        <ul>
+          <li>我在社交场合容易感到尴尬或不知所措</li>
+          <li>我常因为小事情绪失控</li>
+        </ul>
+      </details>
+    </div>
+
+    <!-- Suggestions -->
+    <div class="card">
+      <h2>教学与班级管理建议</h2>
+      <ul>
+        <li>在小组活动中给予表达较少的学生更多缓冲时间</li>
+        <li>通过班会或主题讨论引导情绪表达与倾听</li>
+        <li>对个别学生建议采用私下沟通方式给予支持</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

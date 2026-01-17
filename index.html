@@ -167,7 +167,7 @@
         }
 
         /* Module 2: Dimensions - Redesigned Overview */
-        .dimensions-overview {
+        .dimensions-overview-wrapper {
             display: flex;
             align-items: stretch;
             gap: 20px;
@@ -201,23 +201,28 @@
             font-weight: 500;
         }
 
-        .dimensions-cards {
+        .dimensions-right-section {
             flex: 1;
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
 
+        .dimensions-cards-row {
+            display: flex;
+            gap: 16px;
+        }
+
         .dimension-highlight-card {
+            flex: 1;
             background: white;
             border: 1px solid #e2e8f0;
             border-radius: 12px;
-            padding: 20px 28px;
+            padding: 24px;
             text-align: center;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            flex: 1;
         }
 
         .dimension-highlight-label {
@@ -248,7 +253,6 @@
             font-size: 14px;
             color: #4a5568;
             line-height: 1.7;
-            margin-bottom: 20px;
         }
 
         .dimensions-grid {
@@ -722,12 +726,16 @@
                 padding: 24px;
             }
 
-            .dimensions-overview {
+            .dimensions-overview-wrapper {
                 flex-direction: column;
             }
 
             .average-score-box {
                 width: 100%;
+            }
+
+            .dimensions-cards-row {
+                flex-direction: column;
             }
         }
     </style>
@@ -791,30 +799,32 @@
             <section class="section">
                 <h2 class="section-title">能力维度分析</h2>
                 
-                <div class="dimensions-overview">
+                <div class="dimensions-overview-wrapper">
     <div class="average-score-box">
         <div class="average-score-value">72</div>
         <div class="average-score-label">班级平均分</div>
     </div>
 
-    <div class="dimensions-cards">
-        <div class="dimension-highlight-card">
-            <div class="dimension-highlight-label">最高维度</div>
-            <div class="dimension-highlight-name">情绪觉察</div>
-            <div class="dimension-highlight-value">78</div>
+    <div class="dimensions-right-section">
+        <div class="dimensions-cards-row">
+            <div class="dimension-highlight-card">
+                <div class="dimension-highlight-label">最高维度</div>
+                <div class="dimension-highlight-name">情绪觉察</div>
+                <div class="dimension-highlight-value">78</div>
+            </div>
+
+            <div class="dimension-highlight-card">
+                <div class="dimension-highlight-label">待提升维度</div>
+                <div class="dimension-highlight-name">情绪调节</div>
+                <div class="dimension-highlight-value">65</div>
+            </div>
         </div>
 
-        <div class="dimension-highlight-card">
-            <div class="dimension-highlight-label">待提升维度</div>
-            <div class="dimension-highlight-name">情绪调节</div>
-            <div class="dimension-highlight-value">65</div>
+        <div class="dimensions-insight">
+            班级在<strong>情绪觉察</strong>方面表现突出，学生普遍能够敏锐地感知他人的情绪状态。<strong>情绪调节</strong>能力相对较弱，建议在班级活动中融入情绪管理训练，如呼吸放松、情绪日记等实践方法。
         </div>
     </div>
 </div>
-                
-                <div class="dimensions-insight">
-                    班级在<strong>情绪觉察</strong>方面表现突出，学生普遍能够敏锐地感知他人的情绪状态。<strong>情绪调节</strong>能力相对较弱，建议在班级活动中融入情绪管理训练，如呼吸放松、情绪日记等实践方法。
-                </div>
 
                 <div class="dimensions-grid">
                     <div class="dimension-card">
@@ -1305,42 +1315,57 @@
                 svg += `<circle cx="${x}" cy="${y}" r="5" class="radar-point ${type}"/>`;
             }
 
-            // 添加标签 - 简化版本，确保所有文字可见
+            // 添加标签 - 彻底解决左右重叠问题
             for (let i = 0; i < numDimensions; i++) {
                 const dimName = dimensionNames[i];
                 const value = dimensions[dimName];
-                const labelRadius = maxRadius + 60;  // 显著增加距离
                 const angle = angleStep * i - Math.PI / 2;
 
-                // 计算标签位置
-                let labelX = center + Math.cos(angle) * labelRadius;
-                let labelY = center + Math.sin(angle) * labelRadius;
+                const cosAngle = Math.cos(angle);
+                const sinAngle = Math.sin(angle);
 
-                // 计算分数位置（更远一点）
-                let scoreX = center + Math.cos(angle) * (labelRadius + 25);
-                let scoreY = center + Math.sin(angle) * (labelRadius + 25);
-
-                // 确定对齐方式
+                // 根据角度位置决定标签和分数的放置
+                let labelRadius, scoreRadius;
                 let textAnchor = 'middle';
-                const angleInDegrees = ((angle + Math.PI / 2) * 180 / Math.PI) % 360;
 
-                if (angleInDegrees > 45 && angleInDegrees < 135) {
-                    // 右侧
-                    textAnchor = 'start';
-                } else if (angleInDegrees > 225 && angleInDegrees < 315) {
-                    // 左侧
-                    textAnchor = 'end';
+                if (Math.abs(cosAngle) > 0.6) {
+                    // 左右两侧 - 分数放在更远的位置
+                    labelRadius = maxRadius + 50;
+                    scoreRadius = maxRadius + 75;  // 更远，避免重叠
+                    textAnchor = cosAngle > 0 ? 'start' : 'end';
+                } else {
+                    // 上下 - 分数放在维度名下方
+                    labelRadius = maxRadius + 55;
+                    scoreRadius = maxRadius + 55;  // 同一距离，通过 dy 偏移
+                    textAnchor = 'middle';
                 }
 
-                // 绘制维度名称
-                svg += `<text x="${labelX}" y="${labelY}" class="radar-label" text-anchor="${textAnchor}" dominant-baseline="middle">
-                    ${dimName}
-                </text>`;
+                // 计算标签位置
+                let labelX = center + cosAngle * labelRadius;
+                let labelY = center + sinAngle * labelRadius;
 
-                // 绘制分数
-                svg += `<text x="${scoreX}" y="${scoreY}" class="radar-score" text-anchor="${textAnchor}" dominant-baseline="middle">
-                    ${value}
-                </text>`;
+                // 计算分数位置
+                let scoreX = center + cosAngle * scoreRadius;
+                let scoreY = center + sinAngle * scoreRadius;
+
+                // 绘制维度名称
+                if (Math.abs(cosAngle) > 0.6) {
+                    // 左右：维度名和分数同一行，分数在外侧
+                    svg += `<text x="${labelX}" y="${labelY}" class="radar-label" text-anchor="${textAnchor}" dominant-baseline="middle">
+                        ${dimName}
+                    </text>`;
+                    svg += `<text x="${scoreX}" y="${scoreY}" class="radar-score" text-anchor="${textAnchor}" dominant-baseline="middle">
+                        ${value}
+                    </text>`;
+                } else {
+                    // 上下：分数在维度名下方
+                    svg += `<text x="${labelX}" y="${labelY}" class="radar-label" text-anchor="middle" dy="-10">
+                        ${dimName}
+                    </text>`;
+                    svg += `<text x="${scoreX}" y="${scoreY}" class="radar-score" text-anchor="middle" dy="10">
+                        ${value}
+                    </text>`;
+                }
             }
 
             svg += '</svg>';

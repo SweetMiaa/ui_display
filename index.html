@@ -680,6 +680,13 @@
             stroke: #ed8936;
         }
 
+        .radar-average {
+            fill: rgba(160, 174, 192, 0.15);
+            stroke: #a0aec0;
+            stroke-width: 2;
+            stroke-dasharray: 5, 5;
+        }
+
         .radar-point {
             fill: #fc8181;
         }
@@ -1259,14 +1266,23 @@
         }
 
         // 创建雷达图 - 完全修正版本
+        // 创建雷达图 - 添加班级平均分对比
         function createRadarChart(dimensions, type = 'focus') {
-            const size = 500;  // 进一步增大画布
+            const size = 500;
             const center = size / 2;
             const maxRadius = 150;
             const levels = 5;
             const dimensionNames = Object.keys(dimensions);
             const numDimensions = dimensionNames.length;
             const angleStep = (Math.PI * 2) / numDimensions;
+
+            // 班级平均分数据（用于对比）
+            const classAverage = {
+                "情绪觉察": 78,
+                "情绪调节": 65,
+                "社交应对": 72,
+                "合作与冲突": 70
+            };
 
             let svg = `<svg class="radar-chart" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">`;
 
@@ -1291,7 +1307,20 @@
                 svg += `<line x1="${center}" y1="${center}" x2="${x}" y2="${y}" class="radar-bg"/>`;
             }
 
-            // 绘制数据区域
+            // 绘制班级平均分区域（灰色虚线，作为对比基准）
+            let avgDataPoints = [];
+            for (let i = 0; i < numDimensions; i++) {
+                const dimName = dimensionNames[i];
+                const avgValue = classAverage[dimName];
+                const radius = (avgValue / 100) * maxRadius;
+                const angle = angleStep * i - Math.PI / 2;
+                const x = center + Math.cos(angle) * radius;
+                const y = center + Math.sin(angle) * radius;
+                avgDataPoints.push(`${x},${y}`);
+            }
+            svg += `<polygon points="${avgDataPoints.join(' ')}" class="radar-average"/>`;
+
+            // 绘制学生数据区域
             let dataPoints = [];
             for (let i = 0; i < numDimensions; i++) {
                 const dimName = dimensionNames[i];

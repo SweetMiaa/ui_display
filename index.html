@@ -107,52 +107,135 @@
             color: #1a202c;
         }
 
-        /* Module 1: Overview - Updated Colors */
-        .distribution-bar {
-            height: 48px;
-            display: flex;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-
-        .bar-segment {
+        /* Module 1: Overview - Unit Visualization */
+        .overview-container-unit {
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.8s ease;
-            width: 0;
+            gap: 60px;
+            margin-bottom: 20px;
+            padding: 40px 20px;
         }
 
-        .bar-segment:hover {
-            filter: brightness(1.1);
+        .unit-viz-wrapper {
+            flex-shrink: 0;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 40px;
         }
 
-        .segment-focus { background: #fc8181; }  /* 红色 - 重点关注 */
-        .segment-mild { background: #f6ad55; }   /* 橙色 - 轻度关注 */
-        .segment-stable { background: #48bb78; } /* 绿色 - 状态稳定 */
-
-        .distribution-legend {
-            display: flex;
-            gap: 24px;
-            margin-top: 12px;
-            font-size: 13px;
+        .unit-visualization {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            max-width: 400px;
         }
 
-        .legend-item {
+        .unit-icon {
+            width: 60px;
+            height: 60px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 32px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: scale(0.3);
         }
 
-        .legend-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 3px;
+        .unit-icon.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .unit-icon:hover {
+            transform: scale(1.2);
+        }
+
+        .unit-icon.focus {
+            background: rgba(252, 129, 129, 0.15);
+        }
+
+        .unit-icon.mild {
+            background: rgba(246, 173, 85, 0.15);
+        }
+
+        .unit-icon.stable {
+            background: rgba(72, 187, 120, 0.15);
+        }
+
+        .distribution-legend-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .legend-item-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 20px 24px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            min-width: 220px;
+            transition: all 0.3s ease;
+        }
+
+        .legend-item-vertical:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .legend-focus {
+            border-color: #fc8181;
+        }
+
+        .legend-mild {
+            border-color: #f6ad55;
+        }
+
+        .legend-stable {
+            border-color: #48bb78;
+        }
+
+        .legend-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .legend-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .legend-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .legend-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding-left: 36px;
+        }
+
+        .legend-count {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .legend-percentage {
+            font-size: 16px;
+            font-weight: 600;
+            color: #718096;
         }
 
         .summary-text {
@@ -164,6 +247,29 @@
             font-size: 14px;
             line-height: 1.8;
             color: #4a5568;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .overview-container-unit {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .unit-visualization {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 15px;
+            }
+
+            .unit-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 28px;
+            }
+
+            .legend-item-vertical {
+                min-width: 100%;
+            }
         }
 
         /* Module 2: Dimensions - Redesigned Overview */
@@ -769,31 +875,47 @@
             <!-- Module 1: 班级整体概览 -->
             <section class="section">
                 <h2 class="section-title">班级整体概览</h2>
-                
-                <div class="distribution-bar" id="distributionBar">
-                    <div class="bar-segment segment-focus" data-percentage="15">
-                        <span class="percentage-text">0%</span>
-                    </div>
-                    <div class="bar-segment segment-mild" data-percentage="25">
-                        <span class="percentage-text">0%</span>
-                    </div>
-                    <div class="bar-segment segment-stable" data-percentage="60">
-                        <span class="percentage-text">0%</span>
-                    </div>
-                </div>
 
-                <div class="distribution-legend">
-                    <div class="legend-item">
-                        <div class="legend-dot segment-focus"></div>
-                        <span>重点关注</span>
+                <div class="overview-container-unit">
+                    <div class="unit-viz-wrapper">
+                        <div id="unitVisualization" class="unit-visualization">
+                            <!-- Icons will be generated by JavaScript -->
+                        </div>
                     </div>
-                    <div class="legend-item">
-                        <div class="legend-dot segment-mild"></div>
-                        <span>轻度关注</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-dot segment-stable"></div>
-                        <span>状态稳定</span>
+
+                    <div class="distribution-legend-vertical">
+                        <div class="legend-item-vertical legend-focus">
+                            <div class="legend-header">
+                                <div class="legend-icon">🟠</div>
+                                <span class="legend-title">重点关注</span>
+                            </div>
+                            <div class="legend-stats">
+                                <span class="legend-count">3人</span>
+                                <span class="legend-percentage">15%</span>
+                            </div>
+                        </div>
+
+                        <div class="legend-item-vertical legend-mild">
+                            <div class="legend-header">
+                                <div class="legend-icon">🟡</div>
+                                <span class="legend-title">轻度关注</span>
+                            </div>
+                            <div class="legend-stats">
+                                <span class="legend-count">5人</span>
+                                <span class="legend-percentage">25%</span>
+                            </div>
+                        </div>
+
+                        <div class="legend-item-vertical legend-stable">
+                            <div class="legend-header">
+                                <div class="legend-icon">🟢</div>
+                                <span class="legend-title">状态稳定</span>
+                            </div>
+                            <div class="legend-stats">
+                                <span class="legend-count">12人</span>
+                                <span class="legend-percentage">60%</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1147,6 +1269,63 @@
     </div>
 
     <script>
+        // 学生分布数据
+        const studentDistribution = [
+            // 3个重点关注
+            { type: 'focus', icon: '👤' },
+            { type: 'focus', icon: '👤' },
+            { type: 'focus', icon: '👤' },
+            // 5个轻度关注
+            { type: 'mild', icon: '👤' },
+            { type: 'mild', icon: '👤' },
+            { type: 'mild', icon: '👤' },
+            { type: 'mild', icon: '👤' },
+            { type: 'mild', icon: '👤' },
+            // 12个状态稳定
+            { type: 'stable', icon: '👤' },
+            { type: 'stable', icon: '👤' },
+            { type: 'stable', icon: '👤' },
+            { type: 'stable', icon: '👤' },
+            { type: 'stable', icon: '👤' },
+            { type: 'stable', icon: '👤' },
+            { type: 'stable', icon: '👤' },
+            { type: 'stable', icon: '👤' },
+            { type: 'stable', icon: '👤' },
+            { type: 'stable', icon: '👤' },
+            { type: 'stable', icon: '👤' },
+            { type: 'stable', icon: '👤' }
+        ];
+
+        // 生成单位可视化
+        function generateUnitVisualization() {
+            const container = document.getElementById('unitVisualization');
+            container.innerHTML = '';
+
+            studentDistribution.forEach((student, index) => {
+                const iconDiv = document.createElement('div');
+                iconDiv.className = `unit-icon ${student.type}`;
+                iconDiv.textContent = student.icon;
+                iconDiv.title = getTooltipText(student.type);
+
+                container.appendChild(iconDiv);
+
+                // 依次显示动画
+                setTimeout(() => {
+                    iconDiv.classList.add('show');
+                }, index * 50);
+            });
+        }
+
+        // 获取提示文字
+        function getTooltipText(type) {
+            const tooltips = {
+                focus: '重点关注学生',
+                mild: '轻度关注学生',
+                stable: '状态稳定学生'
+            };
+            return tooltips[type] || '';
+        }
+
         // 学生数据
         const studentData = {
             stable: [
@@ -1465,14 +1644,17 @@
         }
 
         // 页面加载时启动动画
+        // 页面加载时启动动画
         window.addEventListener('load', () => {
+            // 生成单位可视化
             setTimeout(() => {
-                animatePercentage();
-            }, 500);
-            
+                generateUnitVisualization();
+            }, 300);
+
+            // 动画维度条
             setTimeout(() => {
                 animateDimensions();
-            }, 1000);
+            }, 1500);
         });
     </script>
 </body>

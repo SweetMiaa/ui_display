@@ -211,27 +211,39 @@
 
         .highlight-item {
             background: white;
-            padding: 16px 20px;
+            padding: 20px 24px;
             border-radius: 8px;
-            display: flex;
+            display: grid;
+            grid-template-columns: 100px 1fr 80px;
             align-items: center;
-            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .highlight-left {
+            text-align: left;
         }
 
         .highlight-label {
             font-size: 13px;
             color: #718096;
-            margin-bottom: 4px;
+        }
+
+        .highlight-center {
+            text-align: center;
         }
 
         .highlight-dimension {
-            font-size: 18px;
-            font-weight: 600;
+            font-size: 28px;
+            font-weight: 700;
             color: #2d3748;
         }
 
+        .highlight-right {
+            text-align: right;
+        }
+
         .highlight-score {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 600;
             color: #667eea;
         }
@@ -787,29 +799,37 @@
                 <h2 class="section-title">能力维度分析</h2>
                 
                 <div class="dimensions-overview">
-                    <div class="average-score-box">
-                        <div class="average-score-value">72</div>
-                        <div class="average-score-label">班级平均分</div>
-                    </div>
-                    
-                    <div class="dimensions-highlights">
-                        <div class="highlight-item">
-                            <div>
-                                <div class="highlight-label">最高维度</div>
-                                <div class="highlight-dimension">情绪觉察</div>
-                            </div>
-                            <div class="highlight-score">78</div>
-                        </div>
-                        
-                        <div class="highlight-item">
-                            <div>
-                                <div class="highlight-label">待提升维度</div>
-                                <div class="highlight-dimension">情绪调节</div>
-                            </div>
-                            <div class="highlight-score">65</div>
-                        </div>
-                    </div>
-                </div>
+    <div class="average-score-box">
+        <div class="average-score-value">72</div>
+        <div class="average-score-label">班级平均分</div>
+    </div>
+
+    <div class="dimensions-highlights">
+        <div class="highlight-item">
+            <div class="highlight-left">
+                <div class="highlight-label">最高维度</div>
+            </div>
+            <div class="highlight-center">
+                <div class="highlight-dimension">情绪觉察</div>
+            </div>
+            <div class="highlight-right">
+                <div class="highlight-score">78</div>
+            </div>
+        </div>
+
+        <div class="highlight-item">
+            <div class="highlight-left">
+                <div class="highlight-label">待提升维度</div>
+            </div>
+            <div class="highlight-center">
+                <div class="highlight-dimension">情绪调节</div>
+            </div>
+            <div class="highlight-right">
+                <div class="highlight-score">65</div>
+            </div>
+        </div>
+    </div>
+</div>
                 
                 <div class="dimensions-insight">
                     班级在<strong>情绪觉察</strong>方面表现突出，学生普遍能够敏锐地感知他人的情绪状态。<strong>情绪调节</strong>能力相对较弱，建议在班级活动中融入情绪管理训练，如呼吸放松、情绪日记等实践方法。
@@ -1304,39 +1324,56 @@
                 svg += `<circle cx="${x}" cy="${y}" r="5" class="radar-point ${type}"/>`;
             }
 
-            // 添加标签 - 调整位置避免重叠
+            // 添加标签 - 修正左右文字显示
             for (let i = 0; i < numDimensions; i++) {
                 const dimName = dimensionNames[i];
                 const value = dimensions[dimName];
-                const labelRadius = maxRadius + 40;
+                const labelRadius = maxRadius + 50;  // 增加距离
                 const angle = angleStep * i - Math.PI / 2;
                 const x = center + Math.cos(angle) * labelRadius;
                 const y = center + Math.sin(angle) * labelRadius;
-                
+
                 // 根据位置调整对齐方式
                 let textAnchor = 'middle';
                 let dy = 5;
-                
-                if (Math.abs(Math.cos(angle)) > 0.7) {
-                    // 左右两侧
-                    textAnchor = Math.cos(angle) > 0 ? 'start' : 'end';
-                } else if (Math.sin(angle) < -0.5) {
+                let nameY = y;
+                let scoreY = y + 20;
+
+                const cosAngle = Math.cos(angle);
+                const sinAngle = Math.sin(angle);
+
+                if (Math.abs(cosAngle) > 0.6) {
+                    // 左右两侧 - 关键修正
+                    if (cosAngle > 0) {
+                        // 右侧
+                        textAnchor = 'start';
+                    } else {
+                        // 左侧
+                        textAnchor = 'end';
+                    }
+                    // 垂直居中
+                    dy = 5;
+                    nameY = y - 8;
+                    scoreY = y + 12;
+                } else if (sinAngle < -0.5) {
                     // 顶部
+                    textAnchor = 'middle';
                     dy = -5;
-                } else if (Math.sin(angle) > 0.5) {
+                    nameY = y - 15;
+                    scoreY = y;
+                } else if (sinAngle > 0.5) {
                     // 底部
+                    textAnchor = 'middle';
                     dy = 15;
+                    nameY = y + 5;
+                    scoreY = y + 25;
                 }
-                
-                svg += `<text x="${x}" y="${y}" class="radar-label" text-anchor="${textAnchor}" dy="${dy}">
+
+                svg += `<text x="${x}" y="${nameY}" class="radar-label" text-anchor="${textAnchor}">
                     ${dimName}
                 </text>`;
-                
-                // 添加分数 - 更靠近维度名
-                const scoreRadius = labelRadius + 20;
-                const scoreX = center + Math.cos(angle) * scoreRadius;
-                const scoreY = center + Math.sin(angle) * scoreRadius;
-                svg += `<text x="${scoreX}" y="${scoreY}" class="radar-score" text-anchor="${textAnchor}" dy="${dy}">
+
+                svg += `<text x="${x}" y="${scoreY}" class="radar-score" text-anchor="${textAnchor}">
                     ${value}
                 </text>`;
             }

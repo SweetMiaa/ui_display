@@ -644,14 +644,16 @@
         /* Radar Chart - Fixed Text Display */
         .radar-container {
             width: 100%;
-            max-width: 500px;
+            max-width: 550px;  /* 增大容器 */
             margin: 0 auto;
             position: relative;
+            padding: 20px;  /* 添加内边距防止文字被裁切 */
         }
 
         .radar-chart {
             width: 100%;
             height: auto;
+            overflow: visible;  /* 确保文字不会被裁切 */
         }
 
         .radar-bg {
@@ -695,13 +697,13 @@
         }
 
         .radar-label {
-            font-size: 13px;
-            fill: #4a5568;
-            font-weight: 500;
+            font-size: 14px;  /* 增大字体 */
+            fill: #2d3748;  /* 更深的颜色 */
+            font-weight: 600;  /* 加粗 */
         }
 
         .radar-score {
-            font-size: 14px;
+            font-size: 16px;  /* 增大分数字体 */
             fill: #667eea;
             font-weight: 700;
         }
@@ -1267,11 +1269,11 @@
             });
         }
 
-        // 创建雷达图 - 修正文字显示
+        // 创建雷达图 - 完全修正版本
         function createRadarChart(dimensions, type = 'focus') {
-            const size = 400;
+            const size = 500;  // 进一步增大画布
             const center = size / 2;
-            const maxRadius = 140;
+            const maxRadius = 150;
             const levels = 5;
             const dimensionNames = Object.keys(dimensions);
             const numDimensions = dimensionNames.length;
@@ -1324,56 +1326,40 @@
                 svg += `<circle cx="${x}" cy="${y}" r="5" class="radar-point ${type}"/>`;
             }
 
-            // 添加标签 - 修正左右文字显示
+            // 添加标签 - 简化版本，确保所有文字可见
             for (let i = 0; i < numDimensions; i++) {
                 const dimName = dimensionNames[i];
                 const value = dimensions[dimName];
-                const labelRadius = maxRadius + 50;  // 增加距离
+                const labelRadius = maxRadius + 60;  // 显著增加距离
                 const angle = angleStep * i - Math.PI / 2;
-                const x = center + Math.cos(angle) * labelRadius;
-                const y = center + Math.sin(angle) * labelRadius;
 
-                // 根据位置调整对齐方式
+                // 计算标签位置
+                let labelX = center + Math.cos(angle) * labelRadius;
+                let labelY = center + Math.sin(angle) * labelRadius;
+
+                // 计算分数位置（更远一点）
+                let scoreX = center + Math.cos(angle) * (labelRadius + 25);
+                let scoreY = center + Math.sin(angle) * (labelRadius + 25);
+
+                // 确定对齐方式
                 let textAnchor = 'middle';
-                let dy = 5;
-                let nameY = y;
-                let scoreY = y + 20;
+                const angleInDegrees = ((angle + Math.PI / 2) * 180 / Math.PI) % 360;
 
-                const cosAngle = Math.cos(angle);
-                const sinAngle = Math.sin(angle);
-
-                if (Math.abs(cosAngle) > 0.6) {
-                    // 左右两侧 - 关键修正
-                    if (cosAngle > 0) {
-                        // 右侧
-                        textAnchor = 'start';
-                    } else {
-                        // 左侧
-                        textAnchor = 'end';
-                    }
-                    // 垂直居中
-                    dy = 5;
-                    nameY = y - 8;
-                    scoreY = y + 12;
-                } else if (sinAngle < -0.5) {
-                    // 顶部
-                    textAnchor = 'middle';
-                    dy = -5;
-                    nameY = y - 15;
-                    scoreY = y;
-                } else if (sinAngle > 0.5) {
-                    // 底部
-                    textAnchor = 'middle';
-                    dy = 15;
-                    nameY = y + 5;
-                    scoreY = y + 25;
+                if (angleInDegrees > 45 && angleInDegrees < 135) {
+                    // 右侧
+                    textAnchor = 'start';
+                } else if (angleInDegrees > 225 && angleInDegrees < 315) {
+                    // 左侧
+                    textAnchor = 'end';
                 }
 
-                svg += `<text x="${x}" y="${nameY}" class="radar-label" text-anchor="${textAnchor}">
+                // 绘制维度名称
+                svg += `<text x="${labelX}" y="${labelY}" class="radar-label" text-anchor="${textAnchor}" dominant-baseline="middle">
                     ${dimName}
                 </text>`;
 
-                svg += `<text x="${x}" y="${scoreY}" class="radar-score" text-anchor="${textAnchor}">
+                // 绘制分数
+                svg += `<text x="${scoreX}" y="${scoreY}" class="radar-score" text-anchor="${textAnchor}" dominant-baseline="middle">
                     ${value}
                 </text>`;
             }

@@ -1315,7 +1315,7 @@
                 svg += `<circle cx="${x}" cy="${y}" r="5" class="radar-point ${type}"/>`;
             }
 
-            // 添加标签 - 彻底解决左右重叠问题
+            // 添加标签 - 左右侧上下排列，上下侧保持原样
             for (let i = 0; i < numDimensions; i++) {
                 const dimName = dimensionNames[i];
                 const value = dimensions[dimName];
@@ -1324,45 +1324,63 @@
                 const cosAngle = Math.cos(angle);
                 const sinAngle = Math.sin(angle);
 
-                // 根据角度位置决定标签和分数的放置
-                let labelRadius, scoreRadius;
+                let labelRadius = maxRadius + 55;
                 let textAnchor = 'middle';
 
-                if (Math.abs(cosAngle) > 0.6) {
-                    // 左右两侧 - 分数放在更远的位置
-                    labelRadius = maxRadius + 50;
-                    scoreRadius = maxRadius + 75;  // 更远，避免重叠
+                // 判断是左右还是上下
+                const isLeftRight = Math.abs(cosAngle) > 0.6;
+                const isTopBottom = Math.abs(sinAngle) > 0.6;
+
+                if (isLeftRight) {
+                    // 左右两侧：维度名和分数上下排列
                     textAnchor = cosAngle > 0 ? 'start' : 'end';
-                } else {
-                    // 上下 - 分数放在维度名下方
-                    labelRadius = maxRadius + 55;
-                    scoreRadius = maxRadius + 55;  // 同一距离，通过 dy 偏移
-                    textAnchor = 'middle';
-                }
 
-                // 计算标签位置
-                let labelX = center + cosAngle * labelRadius;
-                let labelY = center + sinAngle * labelRadius;
+                    let labelX = center + cosAngle * labelRadius;
+                    let labelY = center + sinAngle * labelRadius;
 
-                // 计算分数位置
-                let scoreX = center + cosAngle * scoreRadius;
-                let scoreY = center + sinAngle * scoreRadius;
-
-                // 绘制维度名称
-                if (Math.abs(cosAngle) > 0.6) {
-                    // 左右：维度名和分数同一行，分数在外侧
-                    svg += `<text x="${labelX}" y="${labelY}" class="radar-label" text-anchor="${textAnchor}" dominant-baseline="middle">
+                    // 维度名在上
+                    svg += `<text x="${labelX}" y="${labelY - 12}" class="radar-label" text-anchor="${textAnchor}" dominant-baseline="middle">
                         ${dimName}
                     </text>`;
-                    svg += `<text x="${scoreX}" y="${scoreY}" class="radar-score" text-anchor="${textAnchor}" dominant-baseline="middle">
+
+                    // 分数在下
+                    svg += `<text x="${labelX}" y="${labelY + 12}" class="radar-score" text-anchor="${textAnchor}" dominant-baseline="middle">
                         ${value}
                     </text>`;
+
+                } else if (isTopBottom) {
+                    // 上下：维度名和分数上下排列
+                    let labelX = center + cosAngle * labelRadius;
+                    let labelY = center + sinAngle * labelRadius;
+
+                    if (sinAngle < 0) {
+                        // 顶部：维度名在上，分数在下
+                        svg += `<text x="${labelX}" y="${labelY - 12}" class="radar-label" text-anchor="middle" dominant-baseline="middle">
+                            ${dimName}
+                        </text>`;
+                        svg += `<text x="${labelX}" y="${labelY + 8}" class="radar-score" text-anchor="middle" dominant-baseline="middle">
+                            ${value}
+                        </text>`;
+                    } else {
+                        // 底部：分数在上，维度名在下
+                        svg += `<text x="${labelX}" y="${labelY - 8}" class="radar-score" text-anchor="middle" dominant-baseline="middle">
+                            ${value}
+                        </text>`;
+                        svg += `<text x="${labelX}" y="${labelY + 12}" class="radar-label" text-anchor="middle" dominant-baseline="middle">
+                            ${dimName}
+                        </text>`;
+                    }
                 } else {
-                    // 上下：分数在维度名下方
-                    svg += `<text x="${labelX}" y="${labelY}" class="radar-label" text-anchor="middle" dy="-10">
+                    // 对角线位置的备用处理
+                    let labelX = center + cosAngle * labelRadius;
+                    let labelY = center + sinAngle * labelRadius;
+
+                    textAnchor = cosAngle > 0 ? 'start' : 'end';
+
+                    svg += `<text x="${labelX}" y="${labelY - 12}" class="radar-label" text-anchor="${textAnchor}" dominant-baseline="middle">
                         ${dimName}
                     </text>`;
-                    svg += `<text x="${scoreX}" y="${scoreY}" class="radar-score" text-anchor="middle" dy="10">
+                    svg += `<text x="${labelX}" y="${labelY + 12}" class="radar-score" text-anchor="${textAnchor}" dominant-baseline="middle">
                         ${value}
                     </text>`;
                 }

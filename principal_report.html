@@ -550,42 +550,35 @@
             border-bottom: 1px solid #e2e8f0;
         }
 
-        /* 高亮动画 - 更柔和的启动 */
+        /* 高亮动画 - 移除位移效果 */
         @keyframes highlightRow {
             0% {
                 background: transparent;
                 box-shadow: none;
-                transform: scale(1);
             }
             5% {
                 background: rgba(102, 126, 234, 0.15);
                 box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.3);
-                transform: scale(1.005);
             }
             15% {
                 background: rgba(102, 126, 234, 0.25);
                 box-shadow: 0 0 0 3px #667eea, inset 0 0 20px rgba(102, 126, 234, 0.2);
-                transform: scale(1.01);
             }
             25% {
                 background: rgba(102, 126, 234, 0.3);
                 box-shadow: 0 0 0 4px #667eea, inset 0 0 25px rgba(102, 126, 234, 0.3);
-                transform: scale(1.015);
             }
             50% {
                 background: rgba(102, 126, 234, 0.25);
                 box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.7);
-                transform: scale(1.01);
             }
             75% {
                 background: rgba(102, 126, 234, 0.15);
                 box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.5);
-                transform: scale(1.005);
             }
             100% {
                 background: transparent;
                 box-shadow: none;
-                transform: scale(1);
             }
         }
 
@@ -623,15 +616,16 @@
             z-index: 10;
         }
 
+        /* 表格行样式 - 移除位移 */
         .class-table tbody tr {
-            transition: all 0.3s ease;
+            transition: background 0.3s ease;
             cursor: pointer;
-            scroll-margin-top: 150px;  /* 从 100px 增加到 150px */
+            scroll-margin-top: 150px;
         }
 
         .class-table tbody tr:hover {
             background: #f7fafc;
-            transform: translateX(4px);
+            /* 移除了 transform: translateX(4px); */
         }
 
         /* 高亮行内的徽章增强显示 */

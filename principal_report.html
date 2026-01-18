@@ -212,7 +212,8 @@
             transform: scale(1.05);
         }
 
-        /* 点击波纹效果 */
+        /* 注释掉或删除点击波纹效果 */
+        /*
         .class-icon::before {
             content: '';
             position: absolute;
@@ -230,6 +231,7 @@
             width: 120%;
             height: 120%;
         }
+        */
 
         /* 高亮行的额外效果 */
         .highlight-row td {
@@ -550,35 +552,42 @@
             border-bottom: 1px solid #e2e8f0;
         }
 
-        /* 高亮动画 - 移除位移效果 */
+        /* 高亮动画 - 确保没有任何位移 */
         @keyframes highlightRow {
             0% {
                 background: transparent;
                 box-shadow: none;
+                transform: none;
             }
             5% {
                 background: rgba(102, 126, 234, 0.15);
                 box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.3);
+                transform: none;
             }
             15% {
                 background: rgba(102, 126, 234, 0.25);
                 box-shadow: 0 0 0 3px #667eea, inset 0 0 20px rgba(102, 126, 234, 0.2);
+                transform: none;
             }
             25% {
                 background: rgba(102, 126, 234, 0.3);
                 box-shadow: 0 0 0 4px #667eea, inset 0 0 25px rgba(102, 126, 234, 0.3);
+                transform: none;
             }
             50% {
                 background: rgba(102, 126, 234, 0.25);
                 box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.7);
+                transform: none;
             }
             75% {
                 background: rgba(102, 126, 234, 0.15);
                 box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.5);
+                transform: none;
             }
             100% {
                 background: transparent;
                 box-shadow: none;
+                transform: none;
             }
         }
 
@@ -586,25 +595,29 @@
             animation: highlightRow 2.5s ease-in-out;
             position: relative;
             z-index: 1;
+            transform: none !important;  /* 强制禁用 */
         }
 
-        /* 高亮行的文字 - 保持深色但加粗突出 */
+        /* 高亮行的文字 */
         .class-table tbody tr.highlight-row td {
             color: #1a202c;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: color 0.3s ease, font-weight 0.3s ease;
+            transform: none !important;
         }
 
         .class-table tbody tr.highlight-row .class-name {
             color: #667eea;
             font-weight: 700;
             font-size: 15px;
+            transform: none !important;
         }
 
         .class-table tbody tr.highlight-row .score-cell {
             color: #667eea;
             font-weight: 700;
             font-size: 16px;
+            transform: none !important;
         }
 
         /* 确保表头始终清晰 */
@@ -616,22 +629,23 @@
             z-index: 10;
         }
 
-        /* 表格行样式 - 移除位移 */
+        /* 表格行样式 - 完全移除所有位移效果 */
         .class-table tbody tr {
             transition: background 0.3s ease;
             cursor: pointer;
             scroll-margin-top: 150px;
+            transform: none !important;  /* 强制禁用 transform */
         }
 
         .class-table tbody tr:hover {
             background: #f7fafc;
-            /* 移除了 transform: translateX(4px); */
+            transform: none !important;  /* 强制禁用 transform */
         }
 
-        /* 高亮行内的徽章增强显示 */
+        /* 高亮行内的徽章 - 也移除位移 */
         .highlight-row .status-badge {
-            transform: scale(1.1);
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transform: none !important;  /* 移除之前的 scale(1.1) */
         }
 
         /* 侧边高亮指示器 */

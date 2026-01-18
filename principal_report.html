@@ -150,12 +150,12 @@
 
 .class-icon {
     width: 100px;
-    height: 110px;
+    height: 120px;  /* 从 110px 增加到 120px */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding-top: 12px;
+    padding-top: 16px;  /* 从 12px 增加到 16px */
     border-radius: 16px;
     font-size: 48px;
     cursor: pointer;
@@ -163,7 +163,7 @@
     opacity: 0;
     transform: scale(0.3);
     position: relative;
-    gap: 8px;
+    gap: 12px;  /* 从 8px 增加到 12px */
 }
 
 .class-icon.show {
@@ -171,10 +171,68 @@
     transform: scale(1);
 }
 
-.class-icon:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
+        .class-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .class-icon:hover::after {
+            content: '点击查看详情';
+            position: absolute;
+            bottom: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2d3748;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            white-space: nowrap;
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0;
+            animation: fadeIn 0.2s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .class-icon:active {
+            transform: scale(1.05);
+        }
+
+        /* 点击波纹效果 */
+        .class-icon::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.4);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .class-icon:active::before {
+            width: 120%;
+            height: 120%;
+        }
+
+        /* 高亮行的额外效果 */
+        .highlight-row td {
+            color: white;
+        }
+
+        .highlight-row .class-name,
+        .highlight-row .score-cell {
+            color: white;
+            font-weight: 700;
+        }
 
 .class-icon.excellent {
     background: rgba(72, 187, 120, 0.3);
@@ -196,7 +254,7 @@
     font-size: 14px;
     font-weight: 600;
     color: #1a202c;
-    margin-top: 4px;
+    margin-top: 8px;  /* 从 4px 增加到 8px */
     line-height: 1.2;
 }
 
@@ -484,13 +542,36 @@
             border-bottom: 1px solid #e2e8f0;
         }
 
+        /* 高亮动画 */
+        @keyframes highlightRow {
+            0% {
+                background: #667eea;
+                transform: scale(1.02);
+            }
+            50% {
+                background: #667eea;
+                transform: scale(1.02);
+            }
+            100% {
+                background: transparent;
+                transform: scale(1);
+            }
+        }
+
+        .highlight-row {
+            animation: highlightRow 2s ease;
+            box-shadow: 0 0 0 3px #667eea;
+        }
+
         .class-table tbody tr {
-            transition: background 0.2s;
+            transition: all 0.3s ease;
             cursor: pointer;
+            scroll-margin-top: 100px;  /* 滚动时的偏移量 */
         }
 
         .class-table tbody tr:hover {
             background: #f7fafc;
+            transform: translateX(4px);
         }
 
         .class-name {
@@ -826,7 +907,7 @@
             </section>
 
             <!-- Class Comparison Table -->
-            <section class="section">
+            <section class="section" id="classComparisonSection">
                 <h2 class="section-title">各班级对比分析</h2>
                 
                 <div class="class-table-container">
@@ -957,7 +1038,12 @@
                     🏫
                     <span class="class-label">${classInfo.name.replace('高二', '')}</span>
                 `;
-                iconDiv.title = `${classInfo.name} - 平均分：${classInfo.avgScore}分`;
+                iconDiv.title = `${classInfo.name} - 平均分：${classInfo.avgScore}分 - 点击查看详情`;
+
+                // 添加点击事件
+                iconDiv.addEventListener('click', () => {
+                    scrollToClassRow(classInfo.name);
+                });
 
                 container.appendChild(iconDiv);
 
@@ -966,6 +1052,41 @@
                     iconDiv.classList.add('show');
                 }, index * 100);
             });
+        }
+
+        // 滚动到指定班级并高亮
+        function scrollToClassRow(className) {
+            // 找到表格中对应的行
+            const rows = document.querySelectorAll('.class-table tbody tr');
+            let targetRow = null;
+
+            rows.forEach(row => {
+                const classNameCell = row.querySelector('.class-name');
+                if (classNameCell && classNameCell.textContent === className) {
+                    targetRow = row;
+                }
+            });
+
+            if (targetRow) {
+                // 移除之前的高亮
+                rows.forEach(row => row.classList.remove('highlight-row'));
+
+                // 平滑滚动到目标行
+                targetRow.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+
+                // 添加高亮动画
+                setTimeout(() => {
+                    targetRow.classList.add('highlight-row');
+
+                    // 2秒后移除高亮类（动画会自动完成）
+                    setTimeout(() => {
+                        targetRow.classList.remove('highlight-row');
+                    }, 2000);
+                }, 500);  // 等待滚动完成后再高亮
+            }
         }
 
         // 班级数据

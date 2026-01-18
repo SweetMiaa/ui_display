@@ -542,36 +542,113 @@
             border-bottom: 1px solid #e2e8f0;
         }
 
-        /* 高亮动画 */
+        /* 高亮动画 - 柔和版本（文字始终可见） */
         @keyframes highlightRow {
             0% {
-                background: #667eea;
+                background: rgba(102, 126, 234, 0.25);
+                box-shadow: 0 0 0 3px #667eea, inset 0 0 20px rgba(102, 126, 234, 0.3);
+                transform: scale(1.01);
+            }
+            15% {
+                background: rgba(102, 126, 234, 0.3);
+                box-shadow: 0 0 0 4px #667eea, inset 0 0 25px rgba(102, 126, 234, 0.4);
                 transform: scale(1.02);
             }
             50% {
-                background: #667eea;
-                transform: scale(1.02);
+                background: rgba(102, 126, 234, 0.2);
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.7);
+                transform: scale(1.01);
             }
             100% {
                 background: transparent;
+                box-shadow: none;
                 transform: scale(1);
             }
         }
 
         .highlight-row {
-            animation: highlightRow 2s ease;
-            box-shadow: 0 0 0 3px #667eea;
+            animation: highlightRow 2.5s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 高亮行的文字 - 保持深色但加粗突出 */
+        .class-table tbody tr.highlight-row td {
+            color: #1a202c;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .class-table tbody tr.highlight-row .class-name {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .class-table tbody tr.highlight-row .score-cell {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        /* 确保表头始终清晰 */
+        .class-table thead th {
+            color: #4a5568 !important;
+            background: #f7fafc !important;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .class-table tbody tr {
             transition: all 0.3s ease;
             cursor: pointer;
-            scroll-margin-top: 100px;  /* 滚动时的偏移量 */
+            scroll-margin-top: 100px;
         }
 
         .class-table tbody tr:hover {
             background: #f7fafc;
             transform: translateX(4px);
+        }
+
+        /* 高亮行内的徽章增强显示 */
+        .highlight-row .status-badge {
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        /* 侧边高亮指示器 */
+        .highlight-row::before {
+            content: '→';
+            position: absolute;
+            left: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            color: #667eea;
+            font-weight: 700;
+            animation: pointToRow 2s ease;
+        }
+
+        @keyframes pointToRow {
+            0%, 100% {
+                left: -30px;
+                opacity: 0;
+            }
+            20%, 80% {
+                left: -15px;
+                opacity: 1;
+            }
+        }
+
+        /* 给表格容器添加相对定位 */
+        .class-table-container {
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .class-table {
+            position: relative;
         }
 
         .class-name {

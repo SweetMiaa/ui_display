@@ -1031,6 +1031,10 @@
             const container = document.getElementById('schoolVisualization');
             container.innerHTML = '';
 
+            // 检查表格是否已填充
+            const tableRows = document.querySelectorAll('.class-table tbody tr');
+            console.log(`表格中有 ${tableRows.length} 行数据`);
+
             classData.forEach((classInfo, index) => {
                 const iconDiv = document.createElement('div');
                 iconDiv.className = `class-icon ${classInfo.status}`;
@@ -1042,6 +1046,7 @@
 
                 // 添加点击事件
                 iconDiv.addEventListener('click', () => {
+                    console.log(`点击了 ${classInfo.name}`);
                     scrollToClassRow(classInfo.name);
                 });
 
@@ -1056,37 +1061,34 @@
 
         // 滚动到指定班级并高亮
         function scrollToClassRow(className) {
-            // 找到表格中对应的行
-            const rows = document.querySelectorAll('.class-table tbody tr');
-            let targetRow = null;
+            // 使用 data 属性查找行（更可靠）
+            const targetRow = document.querySelector(`tr[data-class-name="${className}"]`);
 
-            rows.forEach(row => {
-                const classNameCell = row.querySelector('.class-name');
-                if (classNameCell && classNameCell.textContent === className) {
-                    targetRow = row;
-                }
+            if (!targetRow) {
+                console.error(`找不到班级: ${className}`);
+                return;
+            }
+
+            // 移除之前的高亮
+            const allRows = document.querySelectorAll('.class-table tbody tr');
+            allRows.forEach(row => row.classList.remove('highlight-row'));
+
+            // 平滑滚动到目标行
+            targetRow.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+                inline: 'nearest'
             });
 
-            if (targetRow) {
-                // 移除之前的高亮
-                rows.forEach(row => row.classList.remove('highlight-row'));
+            // 等待滚动完成后添加高亮动画
+            setTimeout(() => {
+                targetRow.classList.add('highlight-row');
 
-                // 平滑滚动到目标行
-                targetRow.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
-
-                // 添加高亮动画
+                // 2秒后移除高亮类
                 setTimeout(() => {
-                    targetRow.classList.add('highlight-row');
-
-                    // 2秒后移除高亮类（动画会自动完成）
-                    setTimeout(() => {
-                        targetRow.classList.remove('highlight-row');
-                    }, 2000);
-                }, 500);  // 等待滚动完成后再高亮
-            }
+                    targetRow.classList.remove('highlight-row');
+                }, 2000);
+            }, 600);  // 增加等待时间，确保滚动完成
         }
 
         // 班级数据
@@ -1104,16 +1106,21 @@
         // 填充班级对比表格
         function populateClassTable() {
             const tbody = document.getElementById('classTableBody');
+
+            // 先清空
             tbody.innerHTML = '';
 
             classData.forEach(classInfo => {
                 const row = document.createElement('tr');
-                
+
+                // 添加 data 属性用于识别
+                row.setAttribute('data-class-name', classInfo.name);
+
                 const statusBadge = classInfo.status === 'excellent' ? '优秀' :
                                    classInfo.status === 'good' ? '良好' : '需关注';
                 const statusClass = classInfo.status === 'excellent' ? 'status-excellent' :
                                    classInfo.status === 'good' ? 'status-good' : 'status-attention';
-                
+
                 row.innerHTML = `
                     <td class="class-name">${classInfo.name}</td>
                     <td>${classInfo.teacher}</td>
@@ -1126,9 +1133,12 @@
                     <td><strong>${classInfo.focus}人</strong></td>
                     <td><span class="status-badge ${statusClass}">${statusBadge}</span></td>
                 `;
-                
+
                 tbody.appendChild(row);
             });
+
+            // 确认表格已填充
+            console.log(`表格填充完成，共 ${classData.length} 个班级`);
         }
 
         // 动画分布条
@@ -1156,13 +1166,15 @@
 
 // 页面加载
 window.addEventListener('load', () => {
-    // 生成学校单位可视化
+    // 先填充表格数据（确保表格有内容）
+    populateClassTable();
+
+    // 然后生成学校单位可视化
     setTimeout(() => {
         generateSchoolVisualization();
     }, 300);
 
-    populateClassTable();
-
+    // 最后动画分布条
     setTimeout(() => {
         animateDistributionBars();
     }, 1200);

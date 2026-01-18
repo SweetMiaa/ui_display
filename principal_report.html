@@ -11,12 +11,20 @@
             box-sizing: border-box;
         }
 
+        /* 全局平滑滚动 */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* 减少滚动时的抖动 */
         body {
+            scroll-behavior: inherit;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
             background: #f5f7fa;
             color: #2c3e50;
             line-height: 1.6;
             padding: 20px;
+            scroll-padding-top: 150px;
         }
 
         .container {
@@ -542,22 +550,37 @@
             border-bottom: 1px solid #e2e8f0;
         }
 
-        /* 高亮动画 - 柔和版本（文字始终可见） */
+        /* 高亮动画 - 更柔和的启动 */
         @keyframes highlightRow {
             0% {
-                background: rgba(102, 126, 234, 0.25);
-                box-shadow: 0 0 0 3px #667eea, inset 0 0 20px rgba(102, 126, 234, 0.3);
-                transform: scale(1.01);
+                background: transparent;
+                box-shadow: none;
+                transform: scale(1);
+            }
+            5% {
+                background: rgba(102, 126, 234, 0.15);
+                box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.3);
+                transform: scale(1.005);
             }
             15% {
+                background: rgba(102, 126, 234, 0.25);
+                box-shadow: 0 0 0 3px #667eea, inset 0 0 20px rgba(102, 126, 234, 0.2);
+                transform: scale(1.01);
+            }
+            25% {
                 background: rgba(102, 126, 234, 0.3);
-                box-shadow: 0 0 0 4px #667eea, inset 0 0 25px rgba(102, 126, 234, 0.4);
-                transform: scale(1.02);
+                box-shadow: 0 0 0 4px #667eea, inset 0 0 25px rgba(102, 126, 234, 0.3);
+                transform: scale(1.015);
             }
             50% {
-                background: rgba(102, 126, 234, 0.2);
+                background: rgba(102, 126, 234, 0.25);
                 box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.7);
                 transform: scale(1.01);
+            }
+            75% {
+                background: rgba(102, 126, 234, 0.15);
+                box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.5);
+                transform: scale(1.005);
             }
             100% {
                 background: transparent;
@@ -567,7 +590,7 @@
         }
 
         .highlight-row {
-            animation: highlightRow 2.5s ease;
+            animation: highlightRow 2.5s ease-in-out;
             position: relative;
             z-index: 1;
         }
@@ -603,7 +626,7 @@
         .class-table tbody tr {
             transition: all 0.3s ease;
             cursor: pointer;
-            scroll-margin-top: 100px;
+            scroll-margin-top: 150px;  /* 从 100px 增加到 150px */
         }
 
         .class-table tbody tr:hover {
@@ -641,10 +664,11 @@
             }
         }
 
-        /* 给表格容器添加相对定位 */
+        /* 优化表格滚动体验 */
         .class-table-container {
             position: relative;
             overflow-x: auto;
+            scroll-behavior: smooth;
         }
 
         .class-table {
@@ -1121,10 +1145,20 @@
                 `;
                 iconDiv.title = `${classInfo.name} - 平均分：${classInfo.avgScore}分 - 点击查看详情`;
 
-                // 添加点击事件
+                // 添加点击事件 - 带视觉反馈
                 iconDiv.addEventListener('click', () => {
                     console.log(`点击了 ${classInfo.name}`);
-                    scrollToClassRow(classInfo.name);
+
+                    // 添加点击反馈
+                    iconDiv.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        iconDiv.style.transform = '';
+                    }, 150);
+
+                    // 延迟执行滚动，让点击动画先完成
+                    setTimeout(() => {
+                        scrollToClassRow(classInfo.name);
+                    }, 200);
                 });
 
                 container.appendChild(iconDiv);
@@ -1136,9 +1170,39 @@
             });
         }
 
-        // 滚动到指定班级并高亮
+        // 更平滑的滚动函数（可选增强版）
+        function smoothScrollToElement(element, offset = 150, duration = 1000) {
+            const targetPosition = element.getBoundingClientRect().top + window.pageYOffset - offset;
+            const startPosition = window.pageYOffset;
+            const distance = targetPosition - startPosition;
+            let startTime = null;
+
+            // 缓动函数：easeInOutCubic
+            function easeInOutCubic(t) {
+                return t < 0.5
+                    ? 4 * t * t * t
+                    : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+            }
+
+            function animation(currentTime) {
+                if (startTime === null) startTime = currentTime;
+                const timeElapsed = currentTime - startTime;
+                const progress = Math.min(timeElapsed / duration, 1);
+                const ease = easeInOutCubic(progress);
+
+                window.scrollTo(0, startPosition + distance * ease);
+
+                if (timeElapsed < duration) {
+                    requestAnimationFrame(animation);
+                }
+            }
+
+            requestAnimationFrame(animation);
+        }
+
+        // 滚动到指定班级并高亮 - 使用增强版滚动
+        // 滚动到指定班级并高亮 - 使用增强版滚动
         function scrollToClassRow(className) {
-            // 使用 data 属性查找行（更可靠）
             const targetRow = document.querySelector(`tr[data-class-name="${className}"]`);
 
             if (!targetRow) {
@@ -1150,22 +1214,17 @@
             const allRows = document.querySelectorAll('.class-table tbody tr');
             allRows.forEach(row => row.classList.remove('highlight-row'));
 
-            // 平滑滚动到目标行
-            targetRow.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center',
-                inline: 'nearest'
-            });
+            // 使用自定义平滑滚动（1秒持续时间）
+            smoothScrollToElement(targetRow, 150, 1000);
 
-            // 等待滚动完成后添加高亮动画
+            // 等待滚动完成后高亮（稍微延长等待时间）
             setTimeout(() => {
                 targetRow.classList.add('highlight-row');
 
-                // 2秒后移除高亮类
                 setTimeout(() => {
                     targetRow.classList.remove('highlight-row');
-                }, 2000);
-            }, 600);  // 增加等待时间，确保滚动完成
+                }, 2500);
+            }, 1100);  // 滚动时间(1000ms) + 100ms缓冲
         }
 
         // 班级数据

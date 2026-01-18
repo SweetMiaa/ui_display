@@ -552,42 +552,40 @@
             border-bottom: 1px solid #e2e8f0;
         }
 
-        /* 高亮动画 - 确保没有任何位移 */
+        /* 高亮动画 - 完全无位移版本 */
         @keyframes highlightRow {
             0% {
                 background: transparent;
-                box-shadow: none;
-                transform: none;
+                outline: 0px solid transparent;
             }
             5% {
                 background: rgba(102, 126, 234, 0.15);
-                box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.3);
-                transform: none;
+                outline: 2px solid rgba(102, 126, 234, 0.3);
+                outline-offset: -2px;
             }
             15% {
                 background: rgba(102, 126, 234, 0.25);
-                box-shadow: 0 0 0 3px #667eea, inset 0 0 20px rgba(102, 126, 234, 0.2);
-                transform: none;
+                outline: 3px solid #667eea;
+                outline-offset: -3px;
             }
             25% {
                 background: rgba(102, 126, 234, 0.3);
-                box-shadow: 0 0 0 4px #667eea, inset 0 0 25px rgba(102, 126, 234, 0.3);
-                transform: none;
+                outline: 4px solid #667eea;
+                outline-offset: -4px;
             }
             50% {
                 background: rgba(102, 126, 234, 0.25);
-                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.7);
-                transform: none;
+                outline: 3px solid rgba(102, 126, 234, 0.7);
+                outline-offset: -3px;
             }
             75% {
                 background: rgba(102, 126, 234, 0.15);
-                box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.5);
-                transform: none;
+                outline: 2px solid rgba(102, 126, 234, 0.5);
+                outline-offset: -2px;
             }
             100% {
                 background: transparent;
-                box-shadow: none;
-                transform: none;
+                outline: 0px solid transparent;
             }
         }
 
@@ -595,7 +593,14 @@
             animation: highlightRow 2.5s ease-in-out;
             position: relative;
             z-index: 1;
-            transform: none !important;  /* 强制禁用 */
+        }
+
+        /* 确保没有任何 transform、box-shadow 或 margin/padding 变化 */
+        .highlight-row,
+        .highlight-row td,
+        .highlight-row th {
+            transform: none !important;
+            margin: 0 !important;
         }
 
         /* 高亮行的文字 */
@@ -603,21 +608,18 @@
             color: #1a202c;
             font-weight: 600;
             transition: color 0.3s ease, font-weight 0.3s ease;
-            transform: none !important;
         }
 
         .class-table tbody tr.highlight-row .class-name {
             color: #667eea;
             font-weight: 700;
             font-size: 15px;
-            transform: none !important;
         }
 
         .class-table tbody tr.highlight-row .score-cell {
             color: #667eea;
             font-weight: 700;
             font-size: 16px;
-            transform: none !important;
         }
 
         /* 确保表头始终清晰 */
@@ -629,23 +631,33 @@
             z-index: 10;
         }
 
-        /* 表格行样式 - 完全移除所有位移效果 */
+        /* 表格行样式 */
         .class-table tbody tr {
             transition: background 0.3s ease;
             cursor: pointer;
             scroll-margin-top: 150px;
-            transform: none !important;  /* 强制禁用 transform */
         }
 
         .class-table tbody tr:hover {
             background: #f7fafc;
-            transform: none !important;  /* 强制禁用 transform */
         }
 
-        /* 高亮行内的徽章 - 也移除位移 */
+        /* 表格本身确保没有布局偏移 */
+        .class-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            table-layout: fixed;  /* 固定表格布局，防止列宽变化 */
+        }
+
+        .class-table td {
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        /* 高亮行内的徽章 */
         .highlight-row .status-badge {
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            transform: none !important;  /* 移除之前的 scale(1.1) */
         }
 
         /* 侧边高亮指示器 */

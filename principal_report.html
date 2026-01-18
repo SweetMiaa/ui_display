@@ -552,77 +552,39 @@
             border-bottom: 1px solid #e2e8f0;
         }
 
-        /* 高亮动画 - 完全无位移版本 */
-        @keyframes highlightRow {
-            0% {
-                background: transparent;
-                outline: 0px solid transparent;
-            }
-            5% {
-                background: rgba(102, 126, 234, 0.15);
-                outline: 2px solid rgba(102, 126, 234, 0.3);
-                outline-offset: -2px;
-            }
-            15% {
-                background: rgba(102, 126, 234, 0.25);
-                outline: 3px solid #667eea;
-                outline-offset: -3px;
-            }
-            25% {
-                background: rgba(102, 126, 234, 0.3);
-                outline: 4px solid #667eea;
-                outline-offset: -4px;
-            }
-            50% {
-                background: rgba(102, 126, 234, 0.25);
-                outline: 3px solid rgba(102, 126, 234, 0.7);
-                outline-offset: -3px;
-            }
-            75% {
-                background: rgba(102, 126, 234, 0.15);
-                outline: 2px solid rgba(102, 126, 234, 0.5);
-                outline-offset: -2px;
-            }
-            100% {
-                background: transparent;
-                outline: 0px solid transparent;
-            }
-        }
-
+        /* 高亮行 - 纯颜色标注，无动画 */
         .highlight-row {
-            animation: highlightRow 2.5s ease-in-out;
-            position: relative;
-            z-index: 1;
+            background: rgba(102, 126, 234, 0.2) !important;
         }
 
-        /* 确保没有任何 transform、box-shadow 或 margin/padding 变化 */
-        .highlight-row,
-        .highlight-row td,
-        .highlight-row th {
-            transform: none !important;
-            margin: 0 !important;
+        .highlight-row td {
+            color: #1a202c !important;
+            font-weight: 600 !important;
+            background: rgba(102, 126, 234, 0.2) !important;
         }
 
-        /* 高亮行的文字 */
-        .class-table tbody tr.highlight-row td {
-            color: #1a202c;
-            font-weight: 600;
-            transition: color 0.3s ease, font-weight 0.3s ease;
+        .highlight-row .class-name {
+            color: #667eea !important;
+            font-weight: 700 !important;
         }
 
-        .class-table tbody tr.highlight-row .class-name {
-            color: #667eea;
-            font-weight: 700;
-            font-size: 15px;
+        .highlight-row .score-cell {
+            color: #667eea !important;
+            font-weight: 700 !important;
         }
 
-        .class-table tbody tr.highlight-row .score-cell {
-            color: #667eea;
-            font-weight: 700;
-            font-size: 16px;
+        /* 表格行基础样式 */
+        .class-table tbody tr {
+            cursor: pointer;
+            scroll-margin-top: 150px;
+            transition: background 0.2s ease;
         }
 
-        /* 确保表头始终清晰 */
+        .class-table tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        /* 确保表头不受影响 */
         .class-table thead th {
             color: #4a5568 !important;
             background: #f7fafc !important;
@@ -631,33 +593,16 @@
             z-index: 10;
         }
 
-        /* 表格行样式 */
-        .class-table tbody tr {
-            transition: background 0.3s ease;
-            cursor: pointer;
-            scroll-margin-top: 150px;
-        }
-
-        .class-table tbody tr:hover {
-            background: #f7fafc;
-        }
-
-        /* 表格本身确保没有布局偏移 */
+        /* 表格基础样式 */
         .class-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 14px;
-            table-layout: fixed;  /* 固定表格布局，防止列宽变化 */
         }
 
         .class-table td {
             padding: 16px;
             border-bottom: 1px solid #e2e8f0;
-        }
-
-        /* 高亮行内的徽章 */
-        .highlight-row .status-badge {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
 
         /* 侧边高亮指示器 */
@@ -1221,7 +1166,7 @@
         }
 
         // 滚动到指定班级并高亮 - 使用增强版滚动
-        // 滚动到指定班级并高亮 - 使用增强版滚动
+        // 滚动到指定班级并高亮 - 纯颜色版本
         function scrollToClassRow(className) {
             const targetRow = document.querySelector(`tr[data-class-name="${className}"]`);
 
@@ -1234,17 +1179,18 @@
             const allRows = document.querySelectorAll('.class-table tbody tr');
             allRows.forEach(row => row.classList.remove('highlight-row'));
 
-            // 使用自定义平滑滚动（1秒持续时间）
+            // 使用自定义平滑滚动
             smoothScrollToElement(targetRow, 150, 1000);
 
-            // 等待滚动完成后高亮（稍微延长等待时间）
+            // 滚动完成后添加高亮（不移除，持续显示）
             setTimeout(() => {
                 targetRow.classList.add('highlight-row');
 
+                // 3秒后淡出高亮
                 setTimeout(() => {
                     targetRow.classList.remove('highlight-row');
-                }, 2500);
-            }, 1100);  // 滚动时间(1000ms) + 100ms缓冲
+                }, 3000);
+            }, 1100);
         }
 
         // 班级数据

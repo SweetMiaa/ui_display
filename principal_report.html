@@ -149,19 +149,21 @@
 }
 
 .class-icon {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 110px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    font-size: 40px;
+    justify-content: flex-start;
+    padding-top: 12px;
+    border-radius: 16px;
+    font-size: 48px;
     cursor: pointer;
     transition: all 0.3s ease;
     opacity: 0;
     transform: scale(0.3);
     position: relative;
+    gap: 8px;
 }
 
 .class-icon.show {
@@ -170,63 +172,75 @@
 }
 
 .class-icon:hover {
-    transform: scale(1.15);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .class-icon.excellent {
-    background: rgba(72, 187, 120, 0.15);
+    background: rgba(72, 187, 120, 0.3);
+    border: 2px solid rgba(72, 187, 120, 0.6);
 }
 
 .class-icon.good {
-    background: rgba(66, 153, 225, 0.15);
+    background: rgba(66, 153, 225, 0.3);
+    border: 2px solid rgba(66, 153, 225, 0.6);
 }
 
 .class-icon.attention {
-    background: rgba(246, 173, 85, 0.15);
+    background: rgba(246, 173, 85, 0.3);
+    border: 2px solid rgba(246, 173, 85, 0.6);
 }
 
 .class-label {
-    position: absolute;
-    bottom: 8px;
-    font-size: 11px;
+    position: static;
+    font-size: 14px;
     font-weight: 600;
-    color: #2d3748;
+    color: #1a202c;
+    margin-top: 4px;
+    line-height: 1.2;
 }
 
 .viz-legend {
     display: flex;
-    gap: 24px;
+    gap: 32px;
     justify-content: center;
+    padding: 16px;
+    background: #f7fafc;
+    border-radius: 8px;
 }
 
 .viz-legend-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: #4a5568;
+    gap: 10px;
+    font-size: 14px;
+    color: #2d3748;
+    font-weight: 500;
 }
 
 .viz-legend-icon {
-    font-size: 24px;
+    font-size: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
 }
 
 .viz-legend-icon.excellent {
-    background: rgba(72, 187, 120, 0.15);
+    background: rgba(72, 187, 120, 0.3);
+    border: 2px solid rgba(72, 187, 120, 0.6);
 }
 
 .viz-legend-icon.good {
-    background: rgba(66, 153, 225, 0.15);
+    background: rgba(66, 153, 225, 0.3);
+    border: 2px solid rgba(66, 153, 225, 0.6);
 }
 
 .viz-legend-icon.attention {
-    background: rgba(246, 173, 85, 0.15);
+    background: rgba(246, 173, 85, 0.3);
+    border: 2px solid rgba(246, 173, 85, 0.6);
 }
 
 .school-summary-stats {
